@@ -7,6 +7,7 @@ print("Setting up serial connection...")
 ser = serial.Serial('/dev/ttyUSB0', 9600)  # Change this to the appropriate port for your Arduino Nano
 time.sleep(2)  # Wait for the connection to be established
 
+
 # Check if the serial connection is open
 if ser.isOpen():
     print("Serial connection established!")
@@ -17,30 +18,55 @@ else:
 while True:
     if keyboard.is_pressed('q'):
         break
-    if keyboard.is_pressed('7'):
-        ser.write(b'7')
+    if keyboard.is_pressed('w'):
+        ser.write(b'w')
         time.sleep(0.1) 
-        print("Sent '7' command to turn the servo left")
-    if keyboard.is_pressed('8'):
-        ser.write(b'8')
+        print("Sent 'w' command to turn the servo left")
+    if keyboard.is_pressed('s'):
+        ser.write(b's')
         time.sleep(0.1) 
-        print("Sent '8' command to turn the servo right")
-    if keyboard.is_pressed('4'):
-        ser.write(b'4')
+        print("Sent 's' command to turn the servo right")
+    if keyboard.is_pressed('e'):
+        ser.write(b'e')
         time.sleep(0.1) 
-        print("Sent '4' command to turn the second servo left")
-    if keyboard.is_pressed('5'):
-        ser.write(b'5')
+        print("Sent 'e' command to turn the second servo left")
+    if keyboard.is_pressed('d'):
+        ser.write(b'd')
         time.sleep(0.1) 
-        print("Sent '5' command to turn the second servo right")
-    if keyboard.is_pressed('1'):
-        ser.write(b'1')
+        print("Sent 'd' command to turn the second servo right")
+    if keyboard.is_pressed('r'):
+        ser.write(b'r')
         time.sleep(0.1) 
-        print("Sent '1' command to turn the second servo left")
-    if keyboard.is_pressed('2'):
-        ser.write(b'2')
+        print("Sent 'r' command to turn the second servo left")
+    if keyboard.is_pressed('f'):
+        ser.write(b'f')
         time.sleep(0.1) 
-        print("Sent '2' command to turn the second servo right")
+        print("Sent 'f' command to turn the second servo right")
+    if keyboard.is_pressed('t'):
+        ser.write(b't')
+        time.sleep(0.1) 
+        print("Sent 't' command to turn the second servo left")
+    if keyboard.is_pressed('g'):
+        ser.write(b'g')
+        time.sleep(0.1) 
+        print("Sent 'g' command to turn the second servo right")
+    if keyboard.is_pressed('y'):
+        ser.write(b'y')
+        time.sleep(0.1) 
+        print("Sent 'y' command to turn the second servo left")
+    if keyboard.is_pressed('h'):
+        ser.write(b'h')
+        time.sleep(0.1) 
+        print("Sent 'h' command to turn the second servo right")
+    if keyboard.is_pressed('u'):
+        ser.write(b'u')
+        time.sleep(0.1) 
+        print("Sent 'u' command to turn the second servo left")
+    if keyboard.is_pressed('j'):
+        ser.write(b'j')
+        time.sleep(0.1) 
+        print("Sent 'j' command to turn the second servo right")
+
 # Close the serial connection
 print("Closing serial connection...")
 ser.close()
