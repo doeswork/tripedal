@@ -1,0 +1,33 @@
+Python supports the use of multiple versions simultaneously on the same system using virtual environments, which are isolated Python environments that you can create for specific projects. This means you can create a new virtual environment and install Python 3.9 in it, and it won't interfere with your existing Python 3.10 setup.
+
+Here's a quick guide to do this using pyenv, a simple, powerful tool for Python version management:
+
+Install pyenv:
+
+If you're on Ubuntu, you can use the following commands:
+arduino
+Copy code
+sudo apt update
+sudo apt install -y build-essential libssl-dev zlib1g-dev libbz2-dev \
+libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils \
+tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+curl https://pyenv.run | bash
+You'll then need to add pyenv to your bash profile. Open ~/.bashrc in a text editor and add the following lines to the end:
+bash
+Copy code
+export PATH="~/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+Then reload your bash profile with source ~/.bashrc.
+Install Python 3.9 with pyenv:
+
+pyenv install 3.9.0 will download and install Python 3.9.0.
+Create a new virtual environment:
+
+pyenv virtualenv 3.9.0 my-venv will create a new virtual environment named "my-venv" using Python 3.9.0.
+Activate the virtual environment:
+
+pyenv activate my-venv will activate the new virtual environment. Once it's activated, the Python version in the virtual environment will be used when you type python in your terminal, and any packages you install with pip will be installed in the virtual environment.
+Now, you can use Python 3.9 in your terminal session without affecting your Python 3.10 setup. When you're done, you can deactivate the virtual environment with pyenv deactivate. To reactivate it later, just use pyenv activate my-venv again.
+
+pyenv deactivate my-venv

@@ -1,4 +1,5 @@
 #include <Servo.h>
+#include <SoftwareSerial.h>
 
 Servo myservo1;  // Create first servo object
 Servo myservo2;  // Create second servo object
@@ -6,6 +7,8 @@ Servo myservo3;  // Create third servo object
 Servo myservo4;  // Create fourth servo object
 Servo myservo5;  // Create fifth servo object
 Servo myservo6;  // Create sixth servo object
+
+SoftwareSerial mySerial(2, 3); // RX, TX
 
 int pos1 = 0;    // Variable to store the servo1 position
 int pos2 = 0;    // Variable to store the servo2 position
@@ -16,17 +19,21 @@ int pos6 = 0;    // Variable to store the servo6 position
 
 void setup() {
   Serial.begin(9600);
-  myservo1.attach(6); // Attaches the first servo on pin 6
-  myservo2.attach(7); // Attaches the second servo on pin 7
+  mySerial.begin(9600);  // Bluetooth serial port
+
+  myservo1.attach(6);  // Attaches the first servo on pin 6
+  myservo2.attach(7);  // Attaches the second servo on pin 7
   myservo3.attach(12); // Attaches the third servo on pin 12
-  myservo4.attach(9); // Attaches the fourth servo on pin 9
+  myservo4.attach(9);  // Attaches the fourth servo on pin 9
   myservo5.attach(10); // Attaches the fifth servo on pin 10
   myservo6.attach(11); // Attaches the sixth servo on pin 11
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    char command = Serial.read();
+  
+  if (mySerial.available() > 0) {
+    char command = mySerial.read();
+    mySerial.write("Hello World\n");
     if (command == 'w') {
       pos1 = max(0, pos1 - 5); // Decrease servo position
       myservo1.write(pos1);
@@ -63,6 +70,32 @@ void loop() {
     } else if (command == 'j') {
       pos6 = min(180, pos6 + 5); // Increase sixth servo position
       myservo6.write(pos6);
+    } else if (command == 'z') {
+      pos5 = max(0, pos5 - 5); // Decrease fifth servo position
+      myservo5.write(pos5);
+
+      pos6 = min(180, pos6 + 5); // Increase sixth servo position
+      myservo6.write(pos6);
+    } else if (command == 'x') {
+      pos5 = max(0, pos5 + 5); // Decrease fifth servo position
+      myservo5.write(pos5);
+
+      pos6 = min(180, pos6 - 5); // Increase sixth servo position
+      myservo6.write(pos6);
+    } else if (command == 'c') {
+      pos3 = max(0, pos3 - 5); // Decrease fifth servo position
+      myservo3.write(pos3);
+
+      pos4 = min(180, pos4 + 5); // Increase sixth servo position
+      myservo4.write(pos4);
+    } else if (command == 'v') {
+      pos3 = max(0, pos3 + 5); // Decrease fifth servo position
+      myservo3.write(pos3);
+
+      pos4 = min(180, pos4 - 5); // Increase sixth servo position
+      myservo4.write(pos4);
     }
+
+
   }
 }

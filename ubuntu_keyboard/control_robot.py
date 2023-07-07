@@ -17,7 +17,8 @@ else:
 
 while True:
     if keyboard.is_pressed('q'):
-        break
+        # break
+        print("hi")
     if keyboard.is_pressed('w'):
         ser.write(b'w')
         time.sleep(0.1) 
@@ -66,6 +67,22 @@ while True:
         ser.write(b'j')
         time.sleep(0.1) 
         print("Sent 'j' command to turn the second servo right")
+    if keyboard.is_pressed('z'):
+        ser.write(b'z')
+        time.sleep(0.1) 
+        print("Sent 'z' command to turn the second servo left")
+    if keyboard.is_pressed('x'):
+        ser.write(b'x')
+        time.sleep(0.1) 
+        print("Sent 'x' command to turn the second servo right")
+    if keyboard.is_pressed('c'):
+        ser.write(b'c')
+        time.sleep(0.1) 
+        print("Sent 'c' command to turn the second servo left")
+    if keyboard.is_pressed('v'):
+        ser.write(b'v')
+        time.sleep(0.1) 
+        print("Sent 'v' command to turn the second servo right")
 
 # Close the serial connection
 print("Closing serial connection...")
