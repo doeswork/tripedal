@@ -29,42 +29,41 @@ void setup() {
   right_thigh.attach(9); 
 }
 
+void moveToPos(Servo &servo, int &currentPos, int newPos, int delayMs) {
+  if (newPos > currentPos) {
+    for (; currentPos <= newPos; currentPos++) {
+      servo.write(currentPos);
+      delay(delayMs);
+    }
+  } else {
+    for (; currentPos >= newPos; currentPos--) {
+      servo.write(currentPos);
+      delay(delayMs);
+    }
+  }
+}
+
 void walkSequence() {
-    // Step 1
-    center_leg_pos = 180;
-    center_leg.write(center_leg_pos);
-    delay(500);
+  // Step 1
+  moveToPos(center_leg, center_leg_pos, 180, 10);
 
-    // Step 2
-    left_thigh_pos = 0;
-    right_thigh_pos = 180;
-    left_thigh.write(left_thigh_pos);
-    right_thigh.write(right_thigh_pos);
-    delay(500);
+  // Step 2
+  moveToPos(left_thigh, left_thigh_pos, 0, 10);
+  moveToPos(right_thigh, right_thigh_pos, 180, 10);
 
-    // Step 3
-    left_knee_pos = 0;
-    right_knee_pos = 180;
-    left_knee.write(left_knee_pos);
-    right_knee.write(right_knee_pos);
-    delay(500);
+  // Step 3
+  moveToPos(left_knee, left_knee_pos, 0, 10);
+  moveToPos(right_knee, right_knee_pos, 180, 10);
 
-    // Step 4
-    ankle_pos = 50;
-    ankle.write(ankle_pos);
-    delay(500);
+  // Step 4
+  moveToPos(ankle, ankle_pos, 50, 10);
 
-    // Step 5
-    left_knee_pos = 90;
-    right_knee_pos = 90;
-    left_knee.write(left_knee_pos);
-    right_knee.write(right_knee_pos);
-    delay(500);
+  // Step 5
+  moveToPos(left_knee, left_knee_pos, 90, 10);
+  moveToPos(right_knee, right_knee_pos, 90, 10);
 
-    // Step 6
-    center_leg_pos = 0;
-    center_leg.write(center_leg_pos);
-    delay(500);
+  // Step 6
+  moveToPos(center_leg, center_leg_pos, 0, 10);
 }
 
 
