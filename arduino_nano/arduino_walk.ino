@@ -10,12 +10,23 @@ Servo right_thigh;
 
 //SoftwareSerial mySerial(2, 3); // RX, TX
 
-int ankle_pos = 0;   
-int center_leg_pos = 0;  
-int left_knee_pos = 0;   
-int right_knee_pos = 0;    
-int left_thigh_pos = 0;    
-int right_thigh_pos = 0;    
+int ankle_pos = 135;   
+int center_leg_pos = 180;  
+int left_knee_pos = 80;   
+int right_knee_pos = 70;    
+int left_thigh_pos = 110;    
+int right_thigh_pos = 45;      
+
+const int STEPS_COUNT = 6;
+int steps[STEPS_COUNT][6] = {
+  {0, 0, 0, 0, 0, 20}, 
+  {0, -80, 80, 0, 0, 0},   
+  {0, 0, 0, -50, 50, 0},  
+  {0, 0, 0, 50, -50, 0},  
+  {0, 80, -80, 0, 0, 0},
+  {0, 0, 0, 0, 0, -20}, 
+  
+};
 
 void setup() {
   Serial.begin(9600);
@@ -25,52 +36,69 @@ void setup() {
   center_leg.attach(7);  
   left_knee.attach(12); 
   right_knee.attach(11);  
-  left_thigh.attach(8); 
-  right_thigh.attach(9); 
+  left_thigh.attach(9); 
+  right_thigh.attach(8); 
+
+    // initialize servos to the upright position
+  ankle.write(ankle_pos);
+  center_leg.write(center_leg_pos);
+  left_knee.write(left_knee_pos);
+  right_knee.write(right_knee_pos);
+  left_thigh.write(left_thigh_pos);
+  right_thigh.write(right_thigh_pos);
+
+  delay(5000); // wait for 5 seconds
+
 }
 
-void moveToPos(Servo &servo, int &currentPos, int newPos, int delayMs) {
-  if (newPos > currentPos) {
-    for (; currentPos <= newPos; currentPos++) {
-      servo.write(currentPos);
-      delay(delayMs);
-    }
-  } else {
-    for (; currentPos >= newPos; currentPos--) {
-      servo.write(currentPos);
-      delay(delayMs);
+void updateServoPos(Servo &servo, int &current_pos, int target_pos) {
+  if (current_pos < target_pos) {
+    current_pos++;
+  } else if (current_pos > target_pos) {
+    current_pos--;
+  }
+  servo.write(current_pos);
+}
+
+
+void walkSequence() {
+  for(int step = 0; step < STEPS_COUNT; ++step) {
+    // Update target positions by adding deltas
+    int center_leg_target = center_leg_pos + steps[step][0];
+    int left_thigh_target = left_thigh_pos + steps[step][1];
+    int right_thigh_target = right_thigh_pos + steps[step][2];
+    int left_knee_target = left_knee_pos + steps[step][3];
+    int right_knee_target = right_knee_pos + steps[step][4];
+    int ankle_target = ankle_pos + steps[step][5];
+    
+    // Make sure positions are in valid range
+    center_leg_target = constrain(center_leg_target, 0, 180);
+    left_thigh_target = constrain(left_thigh_target, 0, 180);
+    right_thigh_target = constrain(right_thigh_target, 0, 180);
+    left_knee_target = constrain(left_knee_target, 0, 180);
+    right_knee_target = constrain(right_knee_target, 0, 180);
+    ankle_target = constrain(ankle_target, 0, 180);
+
+    // Wait until all servos have reached their target positions
+    while(center_leg.read() != center_leg_target || left_thigh.read() != left_thigh_target || 
+          right_thigh.read() != right_thigh_target || left_knee.read() != left_knee_target || 
+          right_knee.read() != right_knee_target || ankle.read() != ankle_target) {
+      // Update servo positions
+      updateServoPos(center_leg, center_leg_pos, center_leg_target);
+      updateServoPos(left_thigh, left_thigh_pos, left_thigh_target);
+      updateServoPos(right_thigh, right_thigh_pos, right_thigh_target);
+      updateServoPos(left_knee, left_knee_pos, left_knee_target);
+      updateServoPos(right_knee, right_knee_pos, right_knee_target);
+      updateServoPos(ankle, ankle_pos, ankle_target);
+      
+      delay(10); // Slow down the servo movements
     }
   }
 }
 
-void walkSequence() {
-  // Step 1
-  moveToPos(center_leg, center_leg_pos, 180, 10);
-
-  // Step 2
-  moveToPos(left_thigh, left_thigh_pos, 180, 10);
-  moveToPos(right_thigh, right_thigh_pos, 0, 10);
-
-  // Step 3
-  moveToPos(left_knee, left_knee_pos, 180, 10);
-  moveToPos(right_knee, right_knee_pos, 0, 10);
-
-  // Step 4
-  moveToPos(ankle, ankle_pos, 50, 10);
-
-  // Step 5
-  moveToPos(left_knee, left_knee_pos, 90, 10);
-  moveToPos(right_knee, right_knee_pos, 90, 10);
-  moveToPos(left_thigh, left_thigh_pos, 0, 10);
-  moveToPos(right_thigh, right_thigh_pos, 180, 10);
-
-  // Step 6
-  moveToPos(center_leg, center_leg_pos, 0, 10);
-}
-
-
 
 void loop() {
     walkSequence();
+    delay(1000); 
 }
 
