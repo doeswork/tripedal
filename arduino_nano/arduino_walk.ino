@@ -48,12 +48,12 @@ void walkSequence() {
   moveToPos(center_leg, center_leg_pos, 180, 10);
 
   // Step 2
-  moveToPos(left_thigh, left_thigh_pos, 0, 10);
-  moveToPos(right_thigh, right_thigh_pos, 180, 10);
+  moveToPos(left_thigh, left_thigh_pos, 180, 10);
+  moveToPos(right_thigh, right_thigh_pos, 0, 10);
 
   // Step 3
-  moveToPos(left_knee, left_knee_pos, 0, 10);
-  moveToPos(right_knee, right_knee_pos, 180, 10);
+  moveToPos(left_knee, left_knee_pos, 180, 10);
+  moveToPos(right_knee, right_knee_pos, 0, 10);
 
   // Step 4
   moveToPos(ankle, ankle_pos, 50, 10);
@@ -61,10 +61,13 @@ void walkSequence() {
   // Step 5
   moveToPos(left_knee, left_knee_pos, 90, 10);
   moveToPos(right_knee, right_knee_pos, 90, 10);
+  moveToPos(left_thigh, left_thigh_pos, 0, 10);
+  moveToPos(right_thigh, right_thigh_pos, 180, 10);
 
   // Step 6
   moveToPos(center_leg, center_leg_pos, 0, 10);
 }
+
 
 
 void loop() {
