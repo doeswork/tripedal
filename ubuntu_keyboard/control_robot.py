@@ -83,6 +83,10 @@ while True:
         ser.write(b'v')
         time.sleep(0.1) 
         print("Sent 'v' command to turn the second servo right")
+    if keyboard.is_pressed('l'):
+        ser.write(b'l')
+        time.sleep(0.1) 
+        print("Sent 'l' command to turn the second servo right")
 
 # Close the serial connection
 print("Closing serial connection...")

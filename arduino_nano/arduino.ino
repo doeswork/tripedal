@@ -1,5 +1,5 @@
 #include <Servo.h>
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 
 Servo myservo1;  // Create first servo object
 Servo myservo2;  // Create second servo object
@@ -8,7 +8,7 @@ Servo myservo4;  // Create fourth servo object
 Servo myservo5;  // Create fifth servo object
 Servo myservo6;  // Create sixth servo object
 
-SoftwareSerial mySerial(2, 3); // RX, TX
+//SoftwareSerial mySerial(2, 3); // RX, TX
 
 int pos1 = 0;    // Variable to store the servo1 position
 int pos2 = 0;    // Variable to store the servo2 position
@@ -19,7 +19,7 @@ int pos6 = 0;    // Variable to store the servo6 position
 
 void setup() {
   Serial.begin(9600);
-  mySerial.begin(9600);  // Bluetooth serial port
+  //mySerial.begin(9600);  // Bluetooth serial port
 
   myservo1.attach(6);  // Attaches the first servo on pin 6
   myservo2.attach(7);  // Attaches the second servo on pin 7
@@ -31,9 +31,9 @@ void setup() {
 
 void loop() {
   
-  if (mySerial.available() > 0) {
-    char command = mySerial.read();
-    mySerial.write("Hello World\n");
+  if (Serial.available() > 0) {
+    char command = Serial.read();
+    Serial.write("Hello World\n");
     if (command == 'w') {
       pos1 = max(0, pos1 - 5); // Decrease servo position
       myservo1.write(pos1);
