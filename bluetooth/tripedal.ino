@@ -1,14 +1,4 @@
-#include <SPI.h>;
-#include <nRF24L01.h>
-#include <RF24.h>
-#include<Servo.h>
-
-// NRF24L01+ setup
-RF24 radio(9, 10);  // CE, CSN
-
-int steps[7][7];  // Will hold steps from the sending Arduino
-bool startReceived = false;
-int stepIndex = 0;  // Will replace the previous 'currentStepsCount'
+#include <Servo.h>
 
 Servo ankle; 
 Servo center_leg;  
@@ -18,9 +8,6 @@ Servo left_thigh;
 Servo right_thigh;  
 Servo bottom_foot;
 
-
-//SoftwareSerial mySerial(2, 3); // RX, TX
-
 int ankle_pos = 70;   
 int center_leg_pos = 90;  
 int left_knee_pos = 60;   
@@ -29,14 +16,10 @@ int left_thigh_pos = 90;
 int right_thigh_pos = 85;      
 int bottom_foot_pos = 180; 
 
+int STEPS_COUNT = 0; // Now not a const
+int steps[20][7]; // Change the size accordingly, but be careful with memory on Arduino
 
 void setup() {
-  
-  // Setup and begin NRF24L01+ communication
-  Serial.begin(9600);
-  radio.begin();
-  radio.openReadingPipe(1, 0xF0F0F0F0E1LL);  // must use the same address as in the other Arduino
-  radio.startListening();
 
   ankle.attach(2);  
   center_leg.attach(5);  
@@ -56,8 +39,25 @@ void setup() {
   bottom_foot.write(bottom_foot_pos);
 
 
-  delay(1000); // wait for 5 seconds
+  delay(100); 
+  Serial.begin(9600);
 
+}
+
+void readBluetoothData() {
+  if (Serial.available()) {
+    STEPS_COUNT = Serial.parseInt(); // Read STEPS_COUNT
+    Serial.read(); // Read and discard the delimiter (comma)
+    for (int i = 0; i < STEPS_COUNT; i++) {
+      for (int j = 0; j < 7; j++) {
+        steps[i][j] = Serial.parseInt(); // Read each step value
+        if(j < 6) { // No need to discard delimiter after the last value in a row
+          Serial.read(); // Read and discard the delimiter (comma)
+        }
+      }
+    }
+    // Optional: Check for a newline character here for extra robustness
+  }
 }
 
 void updateServoPos(Servo &servo, int &current_pos, int target_pos) {
@@ -68,17 +68,8 @@ void updateServoPos(Servo &servo, int &current_pos, int target_pos) {
   }
   servo.write(current_pos);
 }
-
 void walkSequence() {
-  Serial.println("Starting walk sequence...");
-
-  Serial.print("Step Index: ");
-  Serial.println(stepIndex);
-
-  for (int step = 0; step < stepIndex; ++step) {
-    // Print step information
-    Serial.print("Executing step "); Serial.println(step);
-
+  for(int step = 0; step < STEPS_COUNT; ++step) {
     // Update target positions by adding deltas
     int center_leg_target = center_leg_pos + steps[step][0];
     int left_thigh_target = left_thigh_pos + steps[step][1];
@@ -88,7 +79,7 @@ void walkSequence() {
     int ankle_target = ankle_pos + steps[step][5];
     int bottom_foot_target = bottom_foot_pos + steps[step][6];
 
-    // Constrain targets
+    // Make sure positions are in valid range
     center_leg_target = constrain(center_leg_target, 0, 180);
     left_thigh_target = constrain(left_thigh_target, 0, 180);
     right_thigh_target = constrain(right_thigh_target, 0, 180);
@@ -97,13 +88,14 @@ void walkSequence() {
     ankle_target = constrain(ankle_target, 0, 180);
     bottom_foot_target = constrain(bottom_foot_target, 0, 180);
 
+
     // Wait until all servos have reached their target positions
     while(center_leg.read() != center_leg_target || left_thigh.read() != left_thigh_target || 
       right_thigh.read() != right_thigh_target || left_knee.read() != left_knee_target || 
       right_knee.read() != right_knee_target || ankle.read() != ankle_target || 
       bottom_foot.read() != bottom_foot_target) {
 
-      // Update servo positions and print to Serial
+      // Update servo positions
       updateServoPos(center_leg, center_leg_pos, center_leg_target);
       updateServoPos(left_thigh, left_thigh_pos, left_thigh_target);
       updateServoPos(right_thigh, right_thigh_pos, right_thigh_target);
@@ -112,45 +104,13 @@ void walkSequence() {
       updateServoPos(ankle, ankle_pos, ankle_target);
       updateServoPos(bottom_foot, bottom_foot_pos, bottom_foot_target);
 
+      
       delay(10); // Slow down the servo movements
     }
-  delay(20); // Slow down the servo movements
   }
 }
-
-
 void loop() {
-  if (radio.available()) {
-    startReceived = true;
-    char receivedData[50] = {0}; // Initialize the array to zeros
-    radio.read(&receivedData, sizeof(receivedData)); // Read the incoming data
-    receivedData[sizeof(receivedData) - 1] = '\0'; // Null-terminate the received data
-    Serial.println(receivedData); // For debugging
-
-    // If "start" is received, reset and get ready to record steps.
-    if (strcmp(receivedData, "start") == 0) {
-      Serial.println("Start received. Waiting for steps.");
-      startReceived = true;
-      stepIndex = 0;
-    } 
-
-    // If "run" is received, stop recording and execute steps.
-    else if (strcmp(receivedData, "run") == 0) {
-      Serial.println("Run received. Executing steps.");
-      startReceived = false;
-      walkSequence();
-    } 
-
-    // If steps are received and "start" has been flagged, record the steps.
-    else if (startReceived) {
-      char* token = strtok(receivedData, ",");
-        for (int valueIndex = 0; valueIndex < 7; valueIndex++) {
-          steps[stepIndex][valueIndex] = atoi(token);
-          token = strtok(NULL, ",");
-      }
-      stepIndex++;
-        Serial.print("Current stepIndex: ");
-        Serial.println(stepIndex);
-    }
-  }
+    readBluetoothData(); 
+    walkSequence();
+    delay(100); 
 }
