@@ -19,6 +19,8 @@ int bottom_foot_pos = 180;
 int STEPS_COUNT = 0; // Now not a const
 int steps[20][7]; // Change the size accordingly, but be careful with memory on Arduino
 
+bool new_data_received = false;  // Add this flag to keep track of new data
+
 void setup() {
 
   ankle.attach(2);  
@@ -46,6 +48,7 @@ void setup() {
 
 void readBluetoothData() {
   if (Serial.available()) {
+    new_data_received = true; 
     STEPS_COUNT = Serial.parseInt(); // Read STEPS_COUNT
     Serial.read(); // Read and discard the delimiter (comma)
     for (int i = 0; i < STEPS_COUNT; i++) {
@@ -109,8 +112,10 @@ void walkSequence() {
     }
   }
 }
+
 void loop() {
-    readBluetoothData(); 
+  readBluetoothData();
+  while(true) {  // Infinite loop
     walkSequence();
-    delay(100); 
+  }
 }
