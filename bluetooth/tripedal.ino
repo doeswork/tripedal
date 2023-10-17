@@ -16,8 +16,8 @@ int left_thigh_pos = 90;
 int right_thigh_pos = 85;      
 int bottom_foot_pos = 180; 
 
-int STEPS_COUNT = 0; // Now not a const
-int steps[20][7]; // Change the size accordingly, but be careful with memory on Arduino
+int STEPS_COUNT = 7; // Now not a const
+int steps[7][7]; // Change the size accordingly, but be careful with memory on Arduino
 
 bool new_data_received = false;  // Add this flag to keep track of new data
 
@@ -46,22 +46,27 @@ void setup() {
 
 }
 
+int counter = 0; // Counter to keep track of received numbers
+
 void readBluetoothData() {
   if (Serial.available()) {
-    new_data_received = true; 
-    STEPS_COUNT = Serial.parseInt(); // Read STEPS_COUNT
-    Serial.read(); // Read and discard the delimiter (comma)
-    for (int i = 0; i < STEPS_COUNT; i++) {
-      for (int j = 0; j < 7; j++) {
-        steps[i][j] = Serial.parseInt(); // Read each step value
-        if(j < 6) { // No need to discard delimiter after the last value in a row
-          Serial.read(); // Read and discard the delimiter (comma)
-        }
-      }
+    int value = Serial.parseInt();  // Read the value
+    int step_idx = counter / 7;  // Determine which step this value belongs to
+    int value_idx = counter % 7;  // Determine the index within that step
+    steps[step_idx][value_idx] = value;  // Assign the value to steps array
+    Serial.print(value);  // Debugging line
+    Serial.print(", ");  // Debugging line
+    
+    counter++;  // Increment the counter
+    if (counter >= 49) {  // Reset counter if it reaches 49
+      counter = 0;
+      new_data_received = true;  // Flag to indicate a new set of steps is received
     }
-    // Optional: Check for a newline character here for extra robustness
   }
 }
+
+
+
 
 void updateServoPos(Servo &servo, int &current_pos, int target_pos) {
   if (current_pos < target_pos) {
@@ -114,8 +119,13 @@ void walkSequence() {
 }
 
 void loop() {
-  readBluetoothData();
-  while(true) {  // Infinite loop
-    walkSequence();
-  }
+    readBluetoothData(); 
+
+    if (new_data_received) {  // Only execute walkSequence if new data has been received
+        while(true) {
+            walkSequence();
+        }
+    }
+    
+    delay(100); 
 }
