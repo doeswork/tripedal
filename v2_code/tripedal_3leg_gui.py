@@ -2,6 +2,8 @@ import tkinter as tk
 import math
 import serial
 import time
+import csv
+import os
 
 # Initialize the serial connection
 #  ls /dev | grep rfcomm~
@@ -27,7 +29,7 @@ def draw_leg():
     foot_angle_rad = math.radians(foot_slider.get() + calf_slider.get() + thigh_slider.get() - 270)
 
     # Starting points (adjusted for better visibility) for the first leg
-    x0, y0 = 250, 200  # Hip joint for the first leg
+    x0, y0 = 225, 100  # Hip joint for the first leg
     thigh_length = 100  # Pixels
     calf_length = 80  # Pixels
 
@@ -60,7 +62,7 @@ def draw_leg():
     foot2_angle_rad = math.radians(foot2_slider.get() - 90 + thigh2_slider.get() - 90)
 
     # Starting points for the second leg
-    x0_2, y0_2 = 400, 200  # Hip joint for the second leg
+    x0_2, y0_2 = 555, 100  # Hip joint for the second leg
 
     # Adjust the length of thigh for the second leg based on slider value
     thigh2_length = 100 + (calf2_slider.get() / 2)  # 100mm + 1mm for every 2 degrees
@@ -87,7 +89,7 @@ def draw_leg():
     foot3_angle_rad = math.radians(foot3_slider.get() + calf3_slider.get() + thigh3_slider.get() - 270)
 
     # Starting points for the third leg
-    x0_3, y0_3 = 550, 200  # Hip joint for the third leg
+    x0_3, y0_3 = 875, 100  # Hip joint for the third leg
 
     # Calculate the end of thigh for the third leg
     x1_3 = x0_3 + thigh_length * math.sin(thigh3_angle_rad)
@@ -231,6 +233,38 @@ def reset_positions():
     foot3_slider.set(90)
     update_angles()
 
+def save_sequence_to_csv():
+    filename = filename_entry.get()
+    if filename:
+        with open(filename + '.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Thigh', 'Calf', 'Foot', 'Thigh2', 'Calf2', 'Foot2', 'Thigh3', 'Calf3', 'Foot3'])
+            for sequence in walking_sequence:
+                writer.writerow(sequence)
+        print("Sequence saved to:", filename + '.csv')
+    else:
+        print("Please enter a filename.")
+
+def delete_current_sequence():
+    global walking_sequence
+    walking_sequence = []
+    print("Current sequence deleted.")
+
+def list_csv_files():
+    files = [f for f in os.listdir('.') if os.path.isfile(f) and f.endswith('.csv')]
+    listbox.delete(0, tk.END)  # Clear existing listbox entries
+    for file in files:
+        listbox.insert(tk.END, file)
+
+def load_selected_sequence():
+    global walking_sequence
+    selected_file = listbox.get(tk.ANCHOR)
+    if selected_file:
+        with open(selected_file, 'r') as file:
+            reader = csv.reader(file)
+            walking_sequence = [list(map(float, row)) for row in reader][1:]  # Skip header
+        print("Loaded sequence from:", selected_file)
+
 # Create the main window
 root = tk.Tk()
 root.title("Robotic Leg Control")
@@ -316,7 +350,7 @@ print_seq_button = tk.Button(root, text="Print Sequence", command=print_sequence
 reset_button = tk.Button(root, text="Reset", command=reset_positions)
 
 # Create a larger canvas for drawing both legs
-canvas = tk.Canvas(root, width=800, height=500)
+canvas = tk.Canvas(root, width=1100, height=375)
 
 # Sliders for the first leg
 thigh_slider.grid(row=0, column=0)
@@ -352,6 +386,32 @@ foot3_label.grid(row=5, column=2)
 save_button.grid(row=6, column=0, columnspan=3)
 print_seq_button.grid(row=7, column=0, columnspan=3)
 reset_button.grid(row=8, column=0, columnspan=3)
+# Text input field for filename
+filename_entry = tk.Entry(root)
+filename_entry.grid(row=10, column=0, columnspan=3)
+
+# Button to save the sequence
+save_seq_button = tk.Button(root, text="Save Sequence", command=save_sequence_to_csv)
+save_seq_button.grid(row=11, column=0, columnspan=3)
+
+# Button to delete the current sequence
+delete_seq_button = tk.Button(root, text="Delete Current Sequence", command=delete_current_sequence)
+delete_seq_button.grid(row=12, column=0, columnspan=3)
+
+# Listbox to display CSV files
+listbox = tk.Listbox(root)
+listbox.grid(row=13, column=0, columnspan=3)
+
+# Button to refresh and display CSV files
+refresh_button = tk.Button(root, text="Refresh File List", command=list_csv_files)
+refresh_button.grid(row=14, column=0, columnspan=3)
+
+# Button to load the selected sequence
+load_button = tk.Button(root, text="Load Selected Sequence", command=load_selected_sequence)
+load_button.grid(row=15, column=0, columnspan=3)
+
+# Call the function to initially list CSV files
+list_csv_files()
 
 # Canvas
 canvas.grid(row=9, column=0, columnspan=3)
