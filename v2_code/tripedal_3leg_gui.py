@@ -112,10 +112,32 @@ def draw_leg():
                           x2_3 + foot_size * math.sin(foot3_angle_rad - math.pi / 6), 
                           y2_3 + foot_size * math.cos(foot3_angle_rad - math.pi / 6),
                           fill='red')
+    
+def update_entry_from_slider(slider, entry):
+    entry.delete(0, tk.END)
+    entry.insert(0, str(slider.get()))
+
+def update_slider_from_entry(entry, slider):
+    try:
+        value = float(entry.get())
+        slider.set(value)
+    except ValueError:
+        pass  # Ignore invalid input and don't update the slider
 
 def update_angles():
     # Update the angles and redraw both legs
     update_angles_labels()
+
+    update_entry_from_slider(thigh_slider, thigh_entry)
+    update_entry_from_slider(calf_slider, calf_entry)
+    update_entry_from_slider(foot_slider, foot_entry)
+    update_entry_from_slider(thigh2_slider, thigh2_entry)
+    update_entry_from_slider(calf2_slider, calf2_entry)
+    update_entry_from_slider(foot2_slider, foot2_entry)
+    update_entry_from_slider(thigh3_slider, thigh3_entry)
+    update_entry_from_slider(calf3_slider, calf3_entry)
+    update_entry_from_slider(foot3_slider, foot3_entry)
+
     draw_leg()
 
 def update_angles_labels():
@@ -262,8 +284,10 @@ def load_selected_sequence():
     if selected_file:
         with open(selected_file, 'r') as file:
             reader = csv.reader(file)
-            walking_sequence = [list(map(float, row)) for row in reader][1:]  # Skip header
+            next(reader, None)  # Skip the header row
+            walking_sequence = [list(map(float, row)) for row in reader]
         print("Loaded sequence from:", selected_file)
+
 
 # Create the main window
 root = tk.Tk()
@@ -327,19 +351,66 @@ foot3_label = tk.Label(root, text="Foot 3 Angle: 90°")
 
 # Create and place the sliders for the first leg
 thigh_slider.grid(row=0, column=0)
+thigh_entry = tk.Entry(root)
+thigh_entry.insert(0, "90")
+thigh_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(thigh_entry, thigh_slider))
+thigh_entry.bind('<Return>', lambda e: update_slider_from_entry(thigh_entry, thigh_slider))
+thigh_entry.grid(row=0, column=0)
 calf_slider.grid(row=1, column=0)
+calf_entry = tk.Entry(root)
+calf_entry.insert(0, "90")
+calf_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(calf_entry, calf_slider))
+calf_entry.bind('<Return>', lambda e: update_slider_from_entry(calf_entry, calf_slider))
+calf_entry.grid(row=1, column=0)
 foot_slider.grid(row=2, column=0)
+foot_entry = tk.Entry(root)
+foot_entry.insert(0, "90")
+foot_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(foot_entry, foot_slider))
+foot_entry.bind('<Return>', lambda e: update_slider_from_entry(foot_entry, foot_slider))
+foot_entry.grid(row=2, column=0)
 
 # Create and place the sliders for the second leg
 thigh2_slider.grid(row=0, column=1)
+thigh2_entry = tk.Entry(root)
+thigh2_entry.insert(0, "90")
+thigh2_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(thigh2_entry, thigh2_slider))
+thigh2_entry.bind('<Return>', lambda e: update_slider_from_entry(thigh2_entry, thigh2_slider))
+thigh2_entry.grid(row=0, column=1)
 calf2_slider.grid(row=1, column=1)
+calf2_entry = tk.Entry(root)
+calf2_entry.insert(0, "90")
+calf2_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(calf2_entry, calf2_slider))
+calf2_entry.bind('<Return>', lambda e: update_slider_from_entry(calf2_entry, calf2_slider))
+calf2_entry.grid(row=1, column=1)
 foot2_slider.grid(row=2, column=1)
+foot2_entry = tk.Entry(root)
+foot2_entry.insert(0, "90")
+foot2_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(foot2_entry, foot2_slider))
+foot2_entry.bind('<Return>', lambda e: update_slider_from_entry(foot2_entry, foot2_slider))
+foot2_entry.grid(row=2, column=1)
 
 # Create and place the sliders for the third leg
-thigh3_slider.grid(row=0, column=2)
 calf3_slider.grid(row=1, column=2)
+calf3_entry = tk.Entry(root)
+calf3_entry.insert(0, "90")
+calf3_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(calf3_entry, calf3_slider))
+calf3_entry.bind('<Return>', lambda e: update_slider_from_entry(calf3_entry, calf3_slider))
+calf3_entry.grid(row=1, column=2)
+
+thigh3_slider.grid(row=0, column=2)
+thigh3_entry = tk.Entry(root)
+thigh3_entry.insert(0, "90")
+thigh3_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(thigh3_entry, thigh3_slider))
+thigh3_entry.bind('<Return>', lambda e: update_slider_from_entry(thigh3_entry, thigh3_slider))
+thigh3_entry.grid(row=0, column=2)
+
 foot3_slider.grid(row=2, column=2)
 
+foot3_entry = tk.Entry(root)
+foot3_entry.insert(0, "90")
+foot3_entry.bind('<FocusOut>', lambda e: update_slider_from_entry(foot3_entry, foot3_slider))
+foot3_entry.bind('<Return>', lambda e: update_slider_from_entry(foot3_entry, foot3_slider))
+foot3_entry.grid(row=2, column=2)
 # Create a button for saving angles to the sequence
 save_button = tk.Button(root, text="Save Angles", command=save_angle_to_sequence)
 
