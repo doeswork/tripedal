@@ -9,7 +9,7 @@ import os
 #  ls /dev | grep rfcomm~
 #  sudo rfcomm bind 0 00:22:05:00:56:7E or 98:DA:60:07:D9:C7
 
-DEVICE = '/dev/rfcomm1'
+DEVICE = '/dev/rfcomm0'
 BAUD_RATE = 9600
 try:
     serial_connection = serial.Serial(DEVICE, BAUD_RATE, timeout=1)
@@ -227,7 +227,7 @@ def animate_sequence(index=0):
             except Exception as e:
                 print(f"Failed to send data: {e}")
 
-        root.after(2000, animate_sequence, index + 1)
+        root.after(2500, animate_sequence, index + 1)
     else:
         print("Animation complete.")
 
