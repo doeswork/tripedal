@@ -5,16 +5,12 @@ Servo servos[9];  // Array to hold 9 servo objects
 // Assign each servo to a digital pin on the Arduino
 const int servoPins[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-// Initial positions for each servo
-const int initialPositions[9] = {90,85,85,90,0,85,95,105,90}; 
-
 void setup() {
   Serial.begin(9600); // Start serial communication at 9600 baud rate
 
-  // Initialize all servos and set them to their initial positions
+  // Initialize all servos
   for (int i = 0; i < 9; i++) {
     servos[i].attach(servoPins[i]);
-    servos[i].write(initialPositions[i]); // Set initial position
   }
 }
 

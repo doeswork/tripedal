@@ -8,7 +8,10 @@ import os
 # Initialize the serial connection
 #  ls /dev | grep rfcomm~
 #  sudo rfcomm bind 0 00:22:05:00:56:7E or 98:DA:60:07:D9:C7
+# sudo usermod -a -G dialout "your user name"
+# sudo chmod a+rw /dev/rfcomm0
 
+ 
 DEVICE = '/dev/rfcomm0'
 BAUD_RATE = 9600
 try:
@@ -207,15 +210,15 @@ def animate_sequence(index=0):
         # Prepare the list of 9 integers in the required order
         # Assuming the order remains the same as before, but including the third leg
         servo_positions = [
-            angles[4],  # calf2_slider
-            angles[3],  # thigh2_slider
-            angles[0],  # thigh_slider (left)
-            angles[6],  # thigh_slider (right, now from the third leg)
-            angles[1],  # calf_slider (left)
-            angles[7],  # calf_slider (right, now from the third leg)
-            angles[2],  # foot_slider (right)
-            angles[5],  # foot2_slider
-            angles[8],  # foot_slider (left, now from the third leg)
+            angles[0],  # Thigh of Leg 1
+            angles[1],  # Calf of Leg 1
+            angles[2],  # Foot of Leg 1
+            angles[3],  # Thigh of Leg 2
+            angles[4],  # Calf of Leg 2
+            angles[5],  # Foot of Leg 2
+            angles[6],  # Thigh of Leg 3
+            angles[7],  # Calf of Leg 3
+            angles[8],  # Foot of Leg 3
         ]
 
         # Send the positions using the established serial connection
@@ -235,6 +238,7 @@ def animate_sequence(index=0):
 
 def print_sequence():
     # Print the entire walking sequence for all three legs
+    time.sleep(2)
     for idx, angles in enumerate(walking_sequence):
         print(f"Step {idx + 1}: Leg 1 - Thigh {angles[0]}°, Calf {angles[1]}°, Foot {angles[2]}°; " +
               f"Leg 2 - Thigh {angles[3]}°, Calf {angles[4]}°, Foot {angles[5]}°; " +
