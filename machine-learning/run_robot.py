@@ -4,16 +4,26 @@ import serial
 
 STEPS_COUNT_sent = False
 STEPS_COUNT = 7
+
+# center leg, thigh, thigh, calf, calf, ankle, linear
+# steps = [
+#     [0, -10, 10, -10, 10, 0, 0],
+#     [0, 0, 0, 0, 0, 0, -180],
+#     [-40, 0, 0, 0, 0, 0, 0],
+#     [0, -30, 30, -15, 15, 20, 0],
+#     [40, 0, 0, 0, 0, -20, 0],
+#     [0, 0, 0, 0, 0, 0, 160],
+#     [0, 40, -40, 25, -25, 20, 0]
+# ]
 steps = [
-    [0, -15, 15, -10, 10, 0, 0],
-    [0, 0, 0, 0, 0, 0, -180],
-    [-40, 0, 0, 0, 0, 0, 0],
-    [0, -25, 25, -10, 10, 20, 0],
+    [0, -30, 30, -15, 15, 20, 0],
     [40, 0, 0, 0, 0, -20, 0],
     [0, 0, 0, 0, 0, 0, 180],
-    [0, 40, -40, 20, -20, 0, 0]
+    [0, 40, -40, 25, -25, 0, 0],
+    [0, -10, 10, -10, 10, 0, 0],
+    [0, 0, 0, 0, 0, 0, -180],
+    [-40, 0, 0, 0, 0, 0, 0]
 ]
-
 def save_to_csv(data, filename="robot_walk_data.csv"):
     with open(filename, 'a', newline='') as f:
         writer = csv.writer(f)
@@ -25,14 +35,14 @@ def send_walking_sequence(s, steps):
             data_str = f"{value}\n"
             print(f"Sending data: {data_str.strip()}")
             s.write(data_str.encode('utf-8'))
-            time.sleep(0.1)  # Adding delay between each value
+            time.sleep(0.15)  # Adding delay between each value
     else:  # if steps is a list of steps
         for step in steps:
             for value in step:
                 data_str = f"{value}\n"
                 print(f"Sending data: {data_str.strip()}")
                 s.write(data_str.encode('utf-8'))
-                time.sleep(0.1)  # Adding delay between each value
+                time.sleep(0.15)  # Adding delay between each value
 
 
 def record_data_and_control_robot():
@@ -41,7 +51,7 @@ def record_data_and_control_robot():
     try:
         s = serial.Serial(DEVICE, BAUD_RATE)
         print(f"Connected to {DEVICE}")
-        time.sleep(5)
+        time.sleep(7)
 
     except Exception as e:
         print(f"Failed to connect: {e}")
