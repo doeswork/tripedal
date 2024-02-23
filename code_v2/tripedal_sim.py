@@ -1,7 +1,21 @@
 import tkinter as tk
 import math
+import glob
+import os
+import csv
 
 global distance_to_ground1, distance_to_ground2
+
+def list_csv_files():
+    path = './'  # Current directory
+    return glob.glob(os.path.join(path, '*.csv'))  # List all .csv files
+
+def update_csv_selection(option):
+    global selected_csv_file
+    selected_csv_file.set(option)
+
+# List of CSV files
+csv_files = list_csv_files()
 
 def draw_grid():
     # Draw grid lines
@@ -199,6 +213,32 @@ def print_joint_angles():
     print(f"  Calf 2 Angle: {calf2_slider.get()}°")
     print(f"  Foot 2 Angle: {foot2_slider.get()}°")
 
+    thigh3_angle = abs(180 - thigh_slider.get())
+    calf3_angle = abs(270 - calf_slider.get())
+    foot3_angle = abs(180 - foot_slider.get())
+
+    print("Third Leg Angles:")
+    print(f"  Thigh Angle: {thigh3_angle}°")
+    print(f"  Calf Angle: {calf3_angle}°")
+    print(f"  Foot Angle: {foot3_angle}°")
+
+    if selected_csv_file.get():  # Ensure a file is selected
+        with open(selected_csv_file.get(), 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([
+                thigh_slider.get(),
+                calf_slider.get(),
+                foot_slider.get(),
+                thigh2_slider.get(),
+                calf2_slider.get(),
+                foot2_slider.get(),
+                abs(180 - thigh_slider.get()),  # Third leg angles
+                abs(270 - calf_slider.get()),
+                abs(180 - foot_slider.get())
+            ])
+    else:
+        print("No CSV file selected!")
+
 def update_flat_foot_calf():
     calf_value = flat_foot_calf_slider.get()
 
@@ -232,6 +272,13 @@ distance_label.pack()
 # Create and place the button
 print_angles_button = tk.Button(root, text="Print Joint Angles", command=print_joint_angles)
 print_angles_button.pack()
+
+# Variable to keep track of the selected CSV file
+selected_csv_file = tk.StringVar(root)
+selected_csv_file.set(csv_files[0] if csv_files else '')
+# Create a dropdown menu for CSV file selection
+csv_dropdown = tk.OptionMenu(root, selected_csv_file, selected_csv_file.get(), *csv_files, command=update_csv_selection)
+csv_dropdown.pack()
 
 # Create frames for two columns of sliders
 left_frame = tk.Frame(root)
