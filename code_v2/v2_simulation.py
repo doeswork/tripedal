@@ -5,6 +5,8 @@ import os
 import csv
 
 global distance_to_ground1, distance_to_ground2
+global selected_row_index
+selected_row_index = None  # Initially, no row is selected
 
 def list_csv_files():
     path = './'  # Current directory
@@ -13,7 +15,42 @@ def list_csv_files():
 def update_csv_selection(option):
     global selected_csv_file
     selected_csv_file.set(option)
+    update_csv_positions_list()
 
+def update_csv_positions_list():
+    selected_file = selected_csv_file.get()
+    if selected_file:
+        with open(selected_file, 'r') as file:
+            reader = csv.reader(file)
+            positions_list.delete(0, tk.END)  # Clear previous list
+            for row in reader:
+                positions_list.insert(tk.END, row)
+
+def update_sliders_from_row(event):
+    global selected_row_index
+    selected_row_index = positions_list.curselection()[0]  # Get index of selected row
+    selected_row_values = positions_list.get(selected_row_index)  # Get values of selected row
+    # Update sliders with the first 6 values from the selected row
+    thigh_slider.set(int(selected_row_values[0]))
+    calf_slider.set(int(selected_row_values[1]))
+    foot_slider.set(int(selected_row_values[2]))
+    thigh2_slider.set(int(selected_row_values[3]))
+    calf2_slider.set(int(selected_row_values[4]))
+    foot2_slider.set(int(selected_row_values[5]))
+
+def delete_selected_row():
+    selected_row = positions_list.curselection()
+    if selected_row:
+        selected_row_index = int(selected_row[0])
+        with open(selected_csv_file.get(), 'r') as file:
+            reader = csv.reader(file)
+            rows = list(reader)
+        with open(selected_csv_file.get(), 'w', newline='') as file:
+            writer = csv.writer(file)
+            for idx, row in enumerate(rows):
+                if idx != selected_row_index:
+                    writer.writerow(row)
+                    
 # List of CSV files
 csv_files = list_csv_files()
 
@@ -222,21 +259,51 @@ def print_joint_angles():
     print(f"  Calf Angle: {calf3_angle}°")
     print(f"  Foot Angle: {foot3_angle}°")
 
-    if selected_csv_file.get():  # Ensure a file is selected
-        with open(selected_csv_file.get(), 'a', newline='') as file:
+    if selected_row_index is not None:  # Check if a row is selected
+        # Get the current angles from the sliders
+        new_angles = [
+            thigh_slider.get(),
+            calf_slider.get(),
+            foot_slider.get(),
+            thigh2_slider.get(),
+            calf2_slider.get(),
+            foot2_slider.get(),
+            abs(180 - thigh_slider.get()),  # Assuming this is how you calculate the third leg angles
+            abs(270 - calf_slider.get()),
+            abs(180 - foot_slider.get()),
+        ]
+        
+        # Read the current CSV file content
+        with open(selected_csv_file.get(), 'r') as file:
+            rows = list(csv.reader(file))
+        
+        # Replace the selected row with new angles
+        rows[selected_row_index] = new_angles
+        
+        # Write the updated rows back to the CSV file
+        with open(selected_csv_file.get(), 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([
-                thigh_slider.get(),
-                calf_slider.get(),
-                foot_slider.get(),
-                thigh2_slider.get(),
-                calf2_slider.get(),
-                foot2_slider.get(),
-                abs(180 - thigh_slider.get()),  # Third leg angles
-                abs(270 - calf_slider.get()),
-                abs(180 - foot_slider.get())
-            ])
+            writer.writerows(rows)
+        
+        # Update the positions_list ListBox with the new CSV content
+        update_csv_positions_list()
     else:
+        print("No row selected.")
+
+        if selected_csv_file.get():  # Ensure a file is selected
+            with open(selected_csv_file.get(), 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([
+                    thigh_slider.get(),
+                    calf_slider.get(),
+                    foot_slider.get(),
+                    thigh2_slider.get(),
+                    calf2_slider.get(),
+                    foot2_slider.get(),
+                    abs(180 - thigh_slider.get()),  # Third leg angles
+                    abs(270 - calf_slider.get()),
+                    abs(180 - foot_slider.get())
+                ])
         print("No CSV file selected!")
 
 def update_flat_foot_calf():
@@ -279,6 +346,16 @@ selected_csv_file.set(csv_files[0] if csv_files else '')
 # Create a dropdown menu for CSV file selection
 csv_dropdown = tk.OptionMenu(root, selected_csv_file, selected_csv_file.get(), *csv_files, command=update_csv_selection)
 csv_dropdown.pack()
+
+# Create a ListBox to display positions from the selected CSV file
+positions_list = tk.Listbox(root)
+positions_list.pack()
+# Bind the update_sliders_from_row function to the <<ListboxSelect>> event
+positions_list.bind("<<ListboxSelect>>", update_sliders_from_row)
+
+# Create a button to delete selected row
+delete_button = tk.Button(root, text="Delete Selected Row", command=delete_selected_row)
+delete_button.pack()
 
 # Create frames for two columns of sliders
 left_frame = tk.Frame(root)
@@ -357,38 +434,3 @@ draw_leg()
 
 # Start the GUI loop
 root.mainloop()
-
-
-import time
-from adafruit_servokit import ServoKit
-
-# Specify the number of channels on your PCA9685 board
-kit = ServoKit(channels=16)
-
-# Function to control a single servo
-def control_servo(servo_number, angle):
-    """
-    Controls a single servo.
-
-    :param servo_number: The servo number (0-15) to control.
-    :param angle: The angle to set for the servo (0-180 degrees).
-    """
-    if 0 <= servo_number <= 15 and 0 <= angle <= 180:
-        print(f"Moving servo {servo_number} to {angle} degrees.")
-        kit.servo[servo_number].angle = angle
-    else:
-        print("Invalid servo number or angle. Please choose a servo number between 0-15 and angle between 0-180 degrees.")
-
-# Example to control 9 servos, one at a time
-if __name__ == "__main__":
-    # Loop through the first 9 servos
-    for i in range(9):
-        # Set each servo to 90 degrees one at a time
-        control_servo(i, 90)
-        time.sleep(1)  # Wait a second before moving to the next servo
-
-    # Reset servos to 0 degrees
-    print("Resetting servos to 0 degrees.")
-    for i in range(9):
-        control_servo(i, 0)
-        time.sleep(1)
