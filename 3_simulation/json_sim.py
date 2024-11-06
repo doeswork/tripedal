@@ -44,8 +44,9 @@ JOINT_INDICES = {
 
 # Load walking sequence from JSON file
 try:
-    with open('walking_sequence.json', 'r') as f:
+    # with open('walking_sequence.json', 'r') as f:
     # with open('jeff_walking_sequence.json', 'r') as f:
+    with open('21_success.json', 'r') as f:
     # with open('3_server_walking_sequence.json', 'r') as f:
         data = json.load(f)
     walking_sequence = data['steps']
@@ -108,9 +109,9 @@ for step_list in walking_sequence:
         print(f"Processing step: {step}")
         converted_step = convert_to_radians_and_meters(step)
         apply_joint_positions(robot_id, JOINT_INDICES, converted_step, max_velocity=8)  # Set a low max velocity for slower movement
-        for _ in range(160):  # Simulate 1 second at 240Hz
+        for _ in range(120):  # Simulate 1 second at 240Hz
             p.stepSimulation()
-            time.sleep(1./160.)
+            time.sleep(1./60.)
             robot_pos, robot_orientation = p.getBasePositionAndOrientation(robot_id)
             p.resetDebugVisualizerCamera(camera_distance, camera_yaw, camera_pitch, robot_pos)
         # time.sleep(0.25)  # Add delay to observe each step
