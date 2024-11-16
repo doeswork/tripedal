@@ -79,13 +79,13 @@
     </visual>
   </link>
 
-  <joint name="left_knee" type="revolute">
-    <parent link="left_leg_upper"/>
-    <child link="left_leg_lower"/>
-    <origin xyz="0 0 -0.2" rpy="0 0 0"/> <!-- Ensure this aligns with the lower leg's top -->
-    <axis xyz="1 0 0"/>
-    <limit lower="-2" upper="2" effort="10" velocity="10"/>
-  </joint>
+<joint name="left_knee" type="revolute">
+  <parent link="left_leg_upper"/>
+  <child link="left_leg_lower"/>
+  <origin xyz="0 0 -0.2" rpy="0 0 0"/> <!-- Ensure this aligns with the lower leg's top -->
+  <axis xyz="1 0 0"/>
+  <limit lower="-2.356" upper="2.356" effort="10" velocity="10"/> <!-- Updated range for LK -->
+</joint>
 
   <!-- Outer Right Leg -->
   <link name="right_leg_upper">
@@ -127,13 +127,13 @@
     </visual>
   </link>
 
-  <joint name="right_knee" type="revolute">
-    <parent link="right_leg_upper"/>
-    <child link="right_leg_lower"/>
-    <origin xyz="0 0 -0.2" rpy="0 0 0"/> <!-- Ensure this aligns with the lower leg's top -->
-    <axis xyz="1 0 0"/>
-    <limit lower="-2" upper="2" effort="10" velocity="10"/>
-  </joint>
+<joint name="right_knee" type="revolute">
+  <parent link="right_leg_upper"/>
+  <child link="right_leg_lower"/>
+  <origin xyz="0 0 -0.2" rpy="0 0 0"/> <!-- Ensure this aligns with the lower leg's top -->
+  <axis xyz="1 0 0"/>
+  <limit lower="-2.356" upper="2.356" effort="10" velocity="10"/> <!-- Updated range for RK -->
+</joint>
 
 
 <!-- Center Leg Part 1 -->
@@ -193,34 +193,34 @@
   <limit lower="0.0" upper="0.4" effort="10" velocity="10"/>
 </joint>
 
-  <link name="center_foot">
+ <link name="center_foot">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="0.5"/>
-      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+      <inertia ixx="0.005" ixy="0" ixz="0.005" iyy="0.005" iyz="0" izz="0.005"/>
     </inertial>
     <collision>
       <geometry>
-        <box size="0.12 0.2 0.02"/>
+        <cylinder radius="0.13" length="0.02"/> <!-- Circular design -->
       </geometry>
-          <surface>
-      <friction>
-        <ode>
-          <mu>2.0</mu>
-          <mu2>2.0</mu2>
-        </ode>
-      </friction>
-      <rolling_friction>
-        <ode>
-"          <slip1>0.04</slip1>
-"          <slip2>0.04</slip2>
-        </ode>
-      </rolling_friction>
-    </surface>
+      <surface>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+        <rolling_friction>
+          <ode>
+            <slip1>0.04</slip1>
+            <slip2>0.04</slip2>
+          </ode>
+        </rolling_friction>
+      </surface>
     </collision>
     <visual>
       <geometry>
-        <box size="0.12 0.2 0.02"/>
+        <cylinder radius="0.13" length="0.02"/> <!-- Circular design -->
       </geometry>
       <material name="brown"/>
     </visual>
@@ -230,31 +230,31 @@
   <link name="left_foot">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.3"/>
-      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.005" ixy="0" ixz="0.005" iyy="0.005" iyz="0" izz="0.005"/>
     </inertial>
     <collision>
       <geometry>
-        <box size="0.08 0.16 0.02"/>
+        <box size="0.12 0.18 0.05"/> <!-- Increased size for thickness -->
       </geometry>
-          <surface>
-      <friction>
-        <ode>
-          <mu>2.0</mu>
-          <mu2>2.0</mu2>
-        </ode>
-      </friction>
-      <rolling_friction>
-        <ode>
-"          <slip1>0.04</slip1>
-"          <slip2>0.04</slip2>
-        </ode>
-      </rolling_friction>
-    </surface>
+      <surface>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+        <rolling_friction>
+          <ode>
+            <slip1>0.04</slip1>
+            <slip2>0.04</slip2>
+          </ode>
+        </rolling_friction>
+      </surface>
     </collision>
     <visual>
       <geometry>
-        <box size="0.08 0.16 0.02"/>
+        <box size="0.12 0.18 0.05"/> <!-- Increased size for thickness -->
       </geometry>
       <material name="brown"/>
     </visual>
@@ -263,58 +263,58 @@
   <link name="right_foot">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.3"/>
-      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.005" ixy="0" ixz="0.005" iyy="0.005" iyz="0" izz="0.005"/>
     </inertial>
     <collision>
       <geometry>
-        <box size="0.08 0.16 0.02"/>
+        <box size="0.12 0.18 0.05"/> <!-- Increased size for thickness -->
       </geometry>
-          <surface>
-      <friction>
-        <ode>
-          <mu>2.0</mu>
-          <mu2>2.0</mu2>
-        </ode>
-      </friction>
-      <rolling_friction>
-        <ode>
-"          <slip1>0.04</slip1>
-"          <slip2>0.04</slip2>
-        </ode>
-      </rolling_friction>
-    </surface>
+      <surface>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+        <rolling_friction>
+          <ode>
+            <slip1>0.04</slip1>
+            <slip2>0.04</slip2>
+          </ode>
+        </rolling_friction>
+      </surface>
     </collision>
     <visual>
       <geometry>
-        <box size="0.08 0.16 0.02"/>
+        <box size="0.12 0.18 0.05"/> <!-- Increased size for thickness -->
       </geometry>
       <material name="brown"/>
     </visual>
   </link>
 
   <!-- Joints connecting legs to base -->
-  <joint name="left_hip" type="revolute">
-    <parent link="base_link"/>
-    <child link="left_leg_upper"/>
-    <origin xyz="-0.3 0 0" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit lower="-1.57" upper="1.57" effort="10" velocity="10"/>
-  </joint>
+<joint name="left_hip" type="revolute">
+  <parent link="base_link"/>
+  <child link="left_leg_upper"/>
+  <origin xyz="-0.3 0 0" rpy="0 0 0"/>
+  <axis xyz="1 0 0"/>
+  <limit lower="-2.617" upper="2.617" effort="10" velocity="10"/> <!-- Updated range for LH -->
+</joint>
 
-  <joint name="right_hip" type="revolute">
-    <parent link="base_link"/>
-    <child link="right_leg_upper"/>
-    <origin xyz="0.3 0 0" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit lower="-1.57" upper="1.57" effort="10" velocity="10"/>
-  </joint>
+<joint name="right_hip" type="revolute">
+  <parent link="base_link"/>
+  <child link="right_leg_upper"/>
+  <origin xyz="0.3 0 0" rpy="0 0 0"/>
+  <axis xyz="1 0 0"/>
+  <limit lower="-2.617" upper="2.617" effort="10" velocity="10"/> <!-- Updated range for RH -->
+</joint>
 
   <!-- Feet joints -->
   <joint name="left_foot_joint" type="revolute">
     <parent link="left_leg_lower"/>
     <child link="left_foot"/>
-    <origin xyz="0 0 -0.23" rpy="0 0 0"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="1 0 -0.1"/>
     <limit lower="-1.57" upper="1.57" effort="10" velocity="10"/>
   </joint>
@@ -322,7 +322,7 @@
   <joint name="right_foot_joint" type="revolute">
     <parent link="right_leg_lower"/>
     <child link="right_foot"/>
-    <origin xyz="0 0 -0.23" rpy="0 0 0"/>
+    <origin xyz="0 0 -0.25" rpy="0 0 0"/>
     <axis xyz="1 0 -0.1"/>
     <limit lower="-1.57" upper="1.57" effort="10" velocity="10"/>
   </joint>
@@ -330,7 +330,7 @@
 <joint name="center_foot_joint" type="revolute">
   <parent link="center_leg_part2"/>
   <child link="center_foot"/>
-  <origin xyz="0 0 -0.2" rpy="0 0 0"/>
+  <origin xyz="0 0 -0.24" rpy="0 0 0"/>
   <axis xyz="1 0 0"/>
   <limit lower="-1.57" upper="1.57" effort="10" velocity="10"/>
 </joint>

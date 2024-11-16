@@ -16,7 +16,7 @@ p.setGravity(0, 0, -80)  # Standard gravity
 
 # Load plane and robot URDFs
 plane_id = p.loadURDF("plane.urdf")
-start_pos = [0, 0, 0.8]  # Ensure the start position is above the ground
+start_pos = [0, 0, 0.5]  # Ensure the start position is above the ground
 start_orientation = p.getQuaternionFromEuler([0, 0, 0])
 robot_id = p.loadURDF("better_tripedal_robot.urdf", start_pos, start_orientation)
 
@@ -46,7 +46,7 @@ JOINT_INDICES = {
 try:
     # with open('walking_sequence.json', 'r') as f:
     # with open('jeff_walking_sequence.json', 'r') as f:
-    with open('21_success.json', 'r') as f:
+    with open('successful_sequence_14.json', 'r') as f:
     # with open('3_server_walking_sequence.json', 'r') as f:
         data = json.load(f)
     walking_sequence = data['steps']
@@ -111,7 +111,7 @@ for step_list in walking_sequence:
         apply_joint_positions(robot_id, JOINT_INDICES, converted_step, max_velocity=8)  # Set a low max velocity for slower movement
         for _ in range(120):  # Simulate 1 second at 240Hz
             p.stepSimulation()
-            time.sleep(1./60.)
+            time.sleep(1./120.)
             robot_pos, robot_orientation = p.getBasePositionAndOrientation(robot_id)
             p.resetDebugVisualizerCamera(camera_distance, camera_yaw, camera_pitch, robot_pos)
         # time.sleep(0.25)  # Add delay to observe each step
